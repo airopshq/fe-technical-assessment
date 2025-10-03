@@ -1,8 +1,6 @@
-import AirOps from "@airops/airops-js";
+import AirOps from '@airops/airops-js'
 
-// Initialize the AirOps client
-// For public apps (like technical assessments), no authentication is required
-const airops = new AirOps();
+const airops = new AirOps()
 
 /**
  * Execute a workflow using the SDK
@@ -19,16 +17,16 @@ export const executeWorkflow = async (
       payload: {
         inputs: inputs || {},
       },
-    });
+    })
 
-    const result = await execution.result();
+    const result = await execution.result()
 
-    console.log("Full execution result:", result);
-    return result;
+    console.log('Full execution result:', result) 
+    return result
   } catch (error) {
-    console.error("Error executing workflow:", error);
-    throw error;
+    console.error('Error executing workflow:', error)
+    throw error
   }
-};
+}
 
-export default airops;
+export default airops
