@@ -1,9 +1,5 @@
 import AirOps from '@airops/airops-js';
-export interface AirOpsConfig {
-  userId: string;
-  workspaceId: string;
-  hashedUserId: string;
-}
+import type { AirOpsConfig, AirOpsAppConfig } from '@/types/airops';
 
 /**
  * Get AirOps configuration from environment variables
@@ -26,13 +22,6 @@ export function getAirOpsConfigFromEnv(): AirOpsConfig {
   };
 }
 
-/**
- * Get AirOps app configuration from environment variables
- */
-export interface AirOpsAppConfig {
-  appId: string;
-  executionId: string;
-}
 
 export function getAirOpsAppConfigFromEnv(): AirOpsAppConfig {
   const appId = import.meta.env.VITE_AIROPS_APP_ID;

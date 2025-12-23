@@ -1,7 +1,8 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useAirOps } from '@/hooks/useAirOps';
 import { useDebounce } from '@/hooks/useDebounce';
-import { filterWorkflows, sortWorkflows, type SortKey } from '@/utils/workflowFilters';
+import { filterWorkflows, sortWorkflows } from '@/utils/workflowFilters';
+import type { SortKey } from '@/types/sort';
 import { SORT_OPTIONS } from '@/constants/sortOptions';
 import { TABLE_COLUMNS } from '@/constants/tableColumns';
 import { WorkflowTableRow } from '@/components/WorkflowTableRow';
@@ -46,8 +47,9 @@ export function WorkflowsPage() {
   }, []);
 
   return (
-    <div className="border-l border-gray-200">
-      <div className="flex items-center justify-between p-5 gap-6 border-b border-gray-200">
+    <div className="border-l border-gray-200 flex flex-col h-full">
+      {/* Header */}
+      <div className="flex items-center justify-between p-5 gap-6 border-b border-gray-200 flex-shrink-0">
         <div>
           <h1 className="text-[30px] font-bold text-gray-900 leading-9 tracking-[-0.02em]">Workflows</h1>
         </div>
@@ -75,67 +77,86 @@ export function WorkflowsPage() {
         </div>
       </div>
 
-      {/* Initialization Error State */}
-      {initError && (
-        <TableState type="error" message={`Error: ${initError.message}`} />
-      )}
+      {/* Content: fills remaining height under header */}
+      <div className="flex-1 flex flex-col min-h-0">
+        {/* Initialization Error State */}
+        {initError && (
+          <div className="flex-1 overflow-y-auto">
+            <TableState type="error" message={`Error: ${initError.message}`} />
+          </div>
+        )}
 
-      {/* Loading State */}
-      {!initError && loading && <TableState type="loading" />}
+        {/* Loading State */}
+        {!initError && loading && (
+          <div className="flex-1 overflow-y-auto">
+            <TableState type="loading" />
+          </div>
+        )}
 
-      {/* Error State */}
-      {!initError && error && (
-        <TableState type="error" message={error.message} />
-      )}
+        {/* Error State */}
+        {!initError && error && (
+          <div className="flex-1 overflow-y-auto">
+            <TableState type="error" message={error.message} />
+          </div>
+        )}
 
-      {/* Empty State */}
-      {!loading && !error && filteredAndSortedItems.length === 0 && (
-        <TableState type="empty" />
-      )}
+        {/* Empty State */}
+        {!loading && !error && filteredAndSortedItems.length === 0 && (
+          <div className="flex-1 overflow-y-auto">
+            <TableState type="empty" />
+          </div>
+        )}
 
-      {/* Table */}
-      {!loading && !error && filteredAndSortedItems.length > 0 && (
-        <div className="overflow-x-auto ml-5 mr-5">
-          <div className="w-full" role="table" aria-label="Workflows table">
-            {/* Header */}
-            <div
-              className="flex border-b border-gray-200 h-[56px] justify-between items-center"
-              role="row"
-              style={{
-                minWidth: 'max-content',
-              }}
-            >
-              {TABLE_COLUMNS.map((column) => (
-                <div
-                  key={column.key}
-                  className="text-left py-3 px-6 text-sm font-medium text-gray-700 flex-shrink-0"
-                  role="columnheader"
-                  style={{
-                    flex: column.flex ?? 0,
-                    minWidth: column.minWidth,
-                    maxWidth: column.maxWidth,
-                  }}
-                >
-                  {column.label}
-                </div>
-              ))}
-            </div>
-            {/* Rows */}
-            <div role="rowgroup">
-              {filteredAndSortedItems.map((item) => (
-                <WorkflowTableRow
-                  key={item.id}
-                  item={item}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  columns={TABLE_COLUMNS}
-                  onAddTag={handleAddTag}
-                />
-              ))}
+        {/* Table: header fixed, rows scroll */}
+        {!loading && !error && filteredAndSortedItems.length > 0 && (
+          <div className="flex-1 flex flex-col min-h-0 overflow-hidden ml-5 mr-5">
+            <div className="w-full h-full flex flex-col overflow-hidden" role="table" aria-label="Workflows table">
+              {/* Header */}
+              <div
+                className="flex-shrink-0 flex border-b border-gray-200 h-[56px] justify-between items-center bg-white"
+                role="row"
+                style={{
+                  minWidth: 'max-content',
+                }}
+              >
+                {TABLE_COLUMNS.map((column) => (
+                  <div
+                    key={column.key}
+                    className="text-left py-3 px-6 text-sm font-medium text-gray-700 flex-shrink-0"
+                    role="columnheader"
+                    style={{
+                      flex: column.flex ?? 0,
+                      minWidth: column.minWidth,
+                      maxWidth: column.maxWidth,
+                    }}
+                  >
+                    {column.label}
+                  </div>
+                ))}
+              </div>
+              {/* Rows: only this area scrolls */}
+              <div
+                className="flex-1 min-h-0 overflow-y-auto overflow-x-auto"
+                role="rowgroup"
+                style={{
+                  minWidth: 'max-content',
+                }}
+              >
+                {filteredAndSortedItems.map((item) => (
+                  <WorkflowTableRow
+                    key={item.id}
+                    item={item}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    columns={TABLE_COLUMNS}
+                    onAddTag={handleAddTag}
+                  />
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

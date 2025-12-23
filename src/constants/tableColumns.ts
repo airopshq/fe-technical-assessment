@@ -1,10 +1,4 @@
-export interface TableColumn {
-  key: string;
-  label: string;
-  flex?: number;
-  minWidth?: string;
-  maxWidth?: string;
-}
+import type { TableColumn } from '@/types/table';
 
 export const TABLE_COLUMNS: TableColumn[] = [
   {

@@ -1,6 +1,5 @@
 import type { WorkflowItem } from '@/types/workflows';
-
-export type SortKey = 'name' | 'lastUpdated' | 'type' | '';
+import type { SortKey } from '@/types/sort';
 
 /**
  * Filter workflows based on search query

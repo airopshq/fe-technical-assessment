@@ -1,5 +1,5 @@
 import type { WorkflowItem } from '@/types/workflows';
-import type { TableColumn } from '@/constants/tableColumns';
+import type { TableColumn } from '@/types/table';
 import { formatRelativeTime } from '@/utils/dateFormatter';
 import { TagDisplay } from '@/components/TagDisplay';
 import { ActionButton } from '@/components/ActionButton';
