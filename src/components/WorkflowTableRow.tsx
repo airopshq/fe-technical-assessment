@@ -1,5 +1,6 @@
+import { memo, useMemo, useCallback } from 'react';
 import type { WorkflowItem } from '@/types/workflows';
-import type { TableColumn } from '@/types/table';
+import { TABLE_COLUMNS } from '@/constants/tableColumns';
 import { formatRelativeTime } from '@/utils/dateFormatter';
 import { TagDisplay } from '@/components/TagDisplay';
 import { ActionButton } from '@/components/ActionButton';
@@ -11,16 +12,31 @@ interface WorkflowTableRowProps {
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
   onAddTag?: (id: string) => void;
-  columns: TableColumn[];
 }
 
-export function WorkflowTableRow({
+function WorkflowTableRowComponent({
   item,
   onEdit,
   onDelete,
   onAddTag,
-  columns,
 }: WorkflowTableRowProps) {
+  const handleEdit = useCallback(() => {
+    onEdit(item.id);
+  }, [item.id, onEdit]);
+
+  const handleDelete = useCallback(() => {
+    onDelete(item.id);
+  }, [item.id, onDelete]);
+
+  const handleAddTag = useCallback(() => {
+    onAddTag?.(item.id);
+  }, [item.id, onAddTag]);
+
+  const formattedLastUpdated = useMemo(
+    () => formatRelativeTime(item.lastUpdated),
+    [item.lastUpdated]
+  );
+
   const renderCellContent = (columnKey: string) => {
     switch (columnKey) {
       case 'type':
@@ -36,28 +52,23 @@ export function WorkflowTableRow({
       case 'tags':
         return (
           <div className="flex items-center gap-2 flex-wrap">
-            <TagDisplay
-              tags={item.tags}
-              onAddTag={onAddTag ? () => onAddTag(item.id) : undefined}
-            />
+            <TagDisplay tags={item.tags} onAddTag={onAddTag ? handleAddTag : undefined} />
           </div>
         );
       case 'lastUpdated':
         return (
-          <span className="text-sm text-gray-400">
-            {formatRelativeTime(item.lastUpdated)}
-          </span>
+          <span className="text-sm text-gray-400">{formattedLastUpdated}</span>
         );
       case 'actions':
         return (
           <div className="flex items-center gap-3">
             <ActionButton
-              onClick={() => onEdit(item.id)}
+              onClick={handleEdit}
               ariaLabel="Edit"
               icon={<img src={EditIcon} alt="" className="w-4 h-4" />}
             />
             <ActionButton
-              onClick={() => onDelete(item.id)}
+              onClick={handleDelete}
               ariaLabel="Delete"
               icon={<img src={DeleteIcon} alt="" className="w-4 h-4" />}
             />
@@ -76,7 +87,7 @@ export function WorkflowTableRow({
         minWidth: 'max-content',
       }}
     >
-      {columns.map((column) => (
+      {TABLE_COLUMNS.map((column) => (
         <div
           key={column.key}
           className="py-4 px-6 flex-shrink-0"
@@ -93,4 +104,6 @@ export function WorkflowTableRow({
     </div>
   );
 }
+
+export const WorkflowTableRow = memo(WorkflowTableRowComponent);
 

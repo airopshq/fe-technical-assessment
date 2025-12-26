@@ -114,7 +114,6 @@ export function useAirOps() {
     }
   }, [airops]);
 
-  // Automatically fetch workflows when initialized
   useEffect(() => {
     if (isInitialized && airops) {
       fetchWorkflows();
