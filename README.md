@@ -33,6 +33,7 @@ Try to finish within 3 hours. ⏰
 - TypeScript 📝
 - Tailwind CSS 🎨
 - Vite ⚡
+- AI (feel free to use whatever tool you use on your daily workflow!)
 
 ### Getting Started
 1. **Fork the Repo**:
